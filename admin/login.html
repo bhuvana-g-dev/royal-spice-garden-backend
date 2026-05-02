@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Royal Spice Garden</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="login-body">
+
+  <div class="login-wrap">
+
+    <!-- LEFT: Brand Panel -->
+    <div class="login-brand">
+      <div class="brand-inner">
+        <div class="brand-logo">&#9830;</div>
+        <h1 class="brand-name">Royal Spice<br /><em>Garden</em></h1>
+        <p class="brand-tagline">Admin Control Panel</p>
+        <div class="brand-divider"></div>
+        <p class="brand-sub">Manage bookings, catering &amp; menu items from one elegant dashboard.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Login Form -->
+    <div class="login-form-wrap">
+      <div class="login-card">
+
+        <div class="login-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your admin account</p>
+        </div>
+
+        <!-- Error box — hidden until needed -->
+        <div class="login-error" id="loginError" style="display:none;"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+              <span class="input-icon">&#128100;</span>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter username"
+                autocomplete="username"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">&#128274;</span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" class="toggle-pw" id="togglePw" aria-label="Show/hide password">&#128065;</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-full" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-spinner"></span>
+          </button>
+        </form>
+
+        <p class="login-footer-note">&copy; 2026 Royal Spice Garden &mdash; Secure Admin Access</p>
+      </div>
+    </div>
+
+  </div><!-- /login-wrap -->
+
+  <!-- ✅ Script at BOTTOM of body so DOM is ready -->
+  <script>
+    // ─── CONFIG ────────────────────────────────────────────────
+    // When served by Express (npm run dev / npm start):
+    //   window.location.origin = http://localhost:5000
+    // When deployed on Render:
+    //   window.location.origin = https://your-app.onrender.com
+    // This works automatically — no manual URL change needed.
+    const API_BASE = window.location.origin;
+
+    // ─── If already logged in, skip to dashboard ───────────────
+    if (localStorage.getItem('rsg_token')) {
+      window.location.href = 'dashboard.html';
+    }
+
+    // ─── Password visibility toggle ────────────────────────────
+    document.getElementById('togglePw').addEventListener('click', function () {
+      var pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    // ─── Show error helper ──────────────────────────────────────
+    function showError(msg) {
+      var box = document.getElementById('loginError');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+    function hideError() {
+      document.getElementById('loginError').style.display = 'none';
+    }
+
+    // ─── Login form submit ──────────────────────────────────────
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideError();
+
+      var btn      = document.getElementById('loginBtn');
+      var username = document.getElementById('username').value.trim();
+      var password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        showError('Please enter both username and password.');
+        return;
+      }
+
+      // Show loading spinner
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      try {
+        var response = await fetch(API_BASE + '/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, password: password })
+        });
+
+        var data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed. Check credentials.');
+        }
+
+        // ✅ Store token + admin name
+        localStorage.setItem('rsg_token', data.token);
+        localStorage.setItem('rsg_admin', data.admin.username);
+
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
+
+      } catch (err) {
+        showError(err.message || 'Cannot connect to server. Is the backend running?');
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
+    });
+  </script>
+</body>
+</html>

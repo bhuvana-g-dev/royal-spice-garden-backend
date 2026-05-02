@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Royal Spice Garden Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="dashboard-body">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-gem">&#9830;</span>
+      <div>
+        <span class="brand-title">Royal Spice</span>
+        <span class="brand-sub">Garden Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <button class="nav-item active" data-section="dashboard">
+            <span class="nav-icon">&#9783;</span>
+            <span>Dashboard</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="bookings">
+            <span class="nav-icon">&#128197;</span>
+            <span>Bookings</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="catering">
+            <span class="nav-icon">&#127881;</span>
+            <span>Catering</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="menu">
+            <span class="nav-icon">&#127859;</span>
+            <span>Menu Manager</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-badge">
+        <span class="admin-avatar">&#128100;</span>
+        <div>
+          <span class="admin-name" id="sidebarAdminName">Admin</span>
+          <span class="admin-role">Administrator</span>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">
+        <span>&#128682;</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile sidebar backdrop -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <div class="main-wrap">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="topbar-toggle" id="sidebarToggle" aria-label="Toggle menu">&#9776;</button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <span class="topbar-admin" id="topbarAdmin">Admin</span>
+      </div>
+    </header>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ══════════════════════════════════════════
+         SECTION: DASHBOARD
+    ══════════════════════════════════════════ -->
+    <section class="content-section active" id="section-dashboard">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Dashboard Overview</h2>
+          <p class="section-sub">Welcome, <span id="dashWelcomeName">Admin</span> &mdash; Royal Spice Garden</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-gold">
+          <div class="stat-icon">&#128197;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-totalBookings">—</div>
+            <div class="stat-label">Total Bookings</div>
+          </div>
+        </div>
+        <div class="stat-card stat-amber">
+          <div class="stat-icon">&#9202;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-pendingBookings">—</div>
+            <div class="stat-label">Pending Bookings</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-icon">&#10003;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-confirmedBookings">—</div>
+            <div class="stat-label">Confirmed Bookings</div>
+          </div>
+        </div>
+        <div class="stat-card stat-crimson">
+          <div class="stat-icon">&#127881;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-totalCatering">—</div>
+            <div class="stat-label">Total Catering</div>
+          </div>
+        </div>
+        <div class="stat-card stat-amber">
+          <div class="stat-icon">&#9201;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-pendingCatering">—</div>
+            <div class="stat-label">Pending Catering</div>
+          </div>
+        </div>
+        <div class="stat-card stat-gold">
+          <div class="stat-icon">&#127859;</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-totalMenu">—</div>
+            <div class="stat-label">Menu Items</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h3 class="quick-title">Quick Actions</h3>
+        <div class="quick-grid">
+          <button class="quick-btn" data-section="bookings">&#128197; View All Bookings</button>
+          <button class="quick-btn" data-section="catering">&#127881; View Catering Requests</button>
+          <button class="quick-btn" data-section="menu" data-action="add">&#43; Add Menu Item</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION: BOOKINGS
+    ══════════════════════════════════════════ -->
+    <section class="content-section" id="section-bookings">
+      <div class="section-header">
+        <h2 class="section-title">Bookings Management</h2>
+        <div class="section-actions">
+          <input type="text" id="bookingSearch" placeholder="Search name or phone…" class="search-input" />
+          <select id="bookingFilter" class="filter-select">
+            <option value="all">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <button class="btn btn-outline" id="exportBookingsBtn">&#8659; Export CSV</button>
+        </div>
+      </div>
+
+      <p class="loading-state" id="bookingsLoading">Loading bookings…</p>
+      <p class="empty-state"   id="bookingsEmpty"   style="display:none;">No bookings found.</p>
+
+      <div class="table-wrap" id="bookingsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Phone</th><th>Date</th>
+              <th>Time</th><th>Guests</th><th>Notes</th>
+              <th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTbody"></tbody>
+        </table>
+      </div>
+      <div class="cards-grid" id="bookingsCards"></div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION: CATERING
+    ══════════════════════════════════════════ -->
+    <section class="content-section" id="section-catering">
+      <div class="section-header">
+        <h2 class="section-title">Catering Requests</h2>
+        <div class="section-actions">
+          <input type="text" id="cateringSearch" placeholder="Search name or phone…" class="search-input" />
+          <select id="cateringFilter" class="filter-select">
+            <option value="all">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <button class="btn btn-outline" id="exportCateringBtn">&#8659; Export CSV</button>
+        </div>
+      </div>
+
+      <p class="loading-state" id="cateringLoading">Loading catering requests…</p>
+      <p class="empty-state"   id="cateringEmpty"   style="display:none;">No catering requests found.</p>
+
+      <div class="table-wrap" id="cateringTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Phone</th><th>Event</th>
+              <th>Guests</th><th>Event Date</th><th>Notes</th>
+              <th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cateringTbody"></tbody>
+        </table>
+      </div>
+      <div class="cards-grid" id="cateringCards"></div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION: MENU MANAGER
+    ══════════════════════════════════════════ -->
+    <section class="content-section" id="section-menu">
+      <div class="section-header">
+        <h2 class="section-title">Menu Manager</h2>
+        <div class="section-actions">
+          <select id="menuCategoryFilter" class="filter-select">
+            <option value="all">All Categories</option>
+            <option value="biryani">Biryani</option>
+            <option value="grill">Grill &amp; Fry</option>
+            <option value="drinks">Drinks</option>
+            <option value="starters">Starters</option>
+            <option value="desserts">Desserts</option>
+            <option value="other">Other</option>
+          </select>
+          <button class="btn btn-gold" id="addMenuBtn">&#43; Add Item</button>
+        </div>
+      </div>
+
+      <p class="loading-state" id="menuLoading">Loading menu…</p>
+      <p class="empty-state"   id="menuEmpty"   style="display:none;">No menu items yet.</p>
+      <div class="menu-grid"   id="menuGrid"></div>
+    </section>
+
+  </div><!-- /main-wrap -->
+
+  <!-- ══════════════════════════════════════════
+       MENU MODAL (Add / Edit)
+       ✅ Uses style="display:none" NOT [hidden]
+          so CSS transitions work correctly
+  ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="menuModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="menuModalTitle">Add Menu Item</h3>
+        <button class="modal-close" id="menuModalClose" type="button">&times;</button>
+      </div>
+      <form id="menuForm" novalidate>
+        <div style="padding:1.75rem;">
+          <input type="hidden" id="menuItemId" />
+
+          <div class="modal-grid">
+            <div class="form-group">
+              <label for="itemName">Item Name *</label>
+              <input type="text" id="itemName" placeholder="e.g. Chicken Biryani" required />
+            </div>
+            <div class="form-group">
+              <label for="itemPrice">Price (₹) *</label>
+              <input type="number" id="itemPrice" placeholder="e.g. 220" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="itemCategory">Category *</label>
+              <select id="itemCategory" required>
+                <option value="">Select category</option>
+                <option value="biryani">Biryani</option>
+                <option value="grill">Grill &amp; Fry</option>
+                <option value="drinks">Drinks</option>
+                <option value="starters">Starters</option>
+                <option value="desserts">Desserts</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="itemAvailable">Availability</label>
+              <select id="itemAvailable">
+                <option value="true">Available</option>
+                <option value="false">Unavailable</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="itemImage">Image URL</label>
+            <input type="url" id="itemImage" placeholder="https://images.unsplash.com/…" />
+            <div style="margin-top:.6rem;">
+              <img id="imagePreview" src="" alt="Preview" class="image-preview" style="display:none;" />
+              <div id="imagePreviewPlaceholder" class="image-preview-placeholder">Image preview will appear here</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="itemDescription">Description</label>
+            <textarea id="itemDescription" rows="3" placeholder="Brief description of the dish…"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" id="menuModalCancel">Cancel</button>
+            <button type="submit" class="btn btn-gold"  id="menuSaveBtn">
+              <span class="btn-text">Save Item</span>
+              <span class="btn-spinner"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CONFIRM DIALOG
+  ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="confirmModal" style="display:none;">
+    <div class="modal modal-sm">
+      <div style="padding:2.5rem;text-align:center;">
+        <div class="confirm-icon">&#128465;</div>
+        <h3 class="confirm-title">Are you sure?</h3>
+        <p class="confirm-msg" id="confirmMsg">This action cannot be undone.</p>
+        <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1.5rem;">
+          <button class="btn btn-ghost" id="confirmCancel" type="button">Cancel</button>
+          <button class="btn btn-red"   id="confirmOk"     type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Script at very bottom — all DOM elements exist before JS runs -->
+  <script src="admin.js"></script>
+</body>
+</html>
