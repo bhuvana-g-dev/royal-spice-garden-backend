@@ -1,7 +1,7 @@
 {
   "name": "royal-spice-garden-backend",
-  "version": "1.0.0",
-  "description": "Backend API for Royal Spice Garden restaurant website",
+  "version": "2.0.0",
+  "description": "Backend API + Admin Panel for Royal Spice Garden",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,6 +11,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.4"
   },
   "devDependencies": {

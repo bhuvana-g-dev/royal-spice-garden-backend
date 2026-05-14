@@ -604,7 +604,52 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Expose for inline onclick
-  window._editMenuItem = function (id) { openMenuModal(id); };
+  /* ==============================================
+   ADMIN PANEL — EDIT FIX
+
+   INSTRUCTIONS:
+   Find this line in your admin.js:
+     window._editMenuItem = function (id) { openMenuModal(id); };
+
+   Replace it with the entire block below.
+   ============================================== */
+
+  // ✅ FIX: Instead of looking up id in the menuData array
+  // (which may be stale or empty), we fetch the item fresh
+  // from the API every time Edit is clicked.
+  window._editMenuItem = async function (id) {
+    try {
+      // Show loading state on the edit button briefly
+      const res  = await fetch(API_BASE + '/api/admin/menu/' + id, {
+        headers: authHeaders()
+      });
+
+      if (res.status === 401) return handleUnauth();
+
+      const data = await res.json();
+
+      if (!data.success || !data.data) {
+        showToast('Could not load item details. Try again.', 'error');
+        return;
+      }
+
+      const item = data.data;
+
+      // Update menuData so the save (PUT) knows it's edit mode
+      // and openMenuModal can pre-fill from this item
+      const existingIndex = menuData.findIndex(function(m) { return m._id === id; });
+      if (existingIndex >= 0) {
+        menuData[existingIndex] = item;
+      } else {
+        menuData.push(item);
+      }
+
+      openMenuModal(id);
+
+    } catch (err) {
+      showToast('Error loading menu item: ' + err.message, 'error');
+    }
+  };
 
   // Close modal buttons
   document.getElementById('menuModalClose').addEventListener('click',  function () { hideOverlay(menuModal); });
